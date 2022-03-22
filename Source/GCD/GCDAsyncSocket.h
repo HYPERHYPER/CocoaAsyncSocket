@@ -1082,7 +1082,7 @@ typedef NS_ERROR_ENUM(GCDAsyncSocketErrorDomain, GCDAsyncSocketError) {
  * dispatch_retain(myExistingQueue);
  * return myExistingQueue;
 **/
-- (nullable dispatch_queue_t)newSocketQueueForConnectionFromAddress:(NSData *)address onSocket:(GCDAsyncSocket *)sock;
+- (nullable dispatch_queue_t)_newSocketQueueForConnectionFromAddress:(NSData *)address onSocket:(GCDAsyncSocket *)sock;
 
 /**
  * Called when a socket accepts a connection.
@@ -1094,43 +1094,43 @@ typedef NS_ERROR_ENUM(GCDAsyncSocketErrorDomain, GCDAsyncSocketError) {
  * By default the new socket will have the same delegate and delegateQueue.
  * You may, of course, change this at any time.
 **/
-- (void)socket:(GCDAsyncSocket *)sock didAcceptNewSocket:(GCDAsyncSocket *)newSocket;
+- (void)_socket:(GCDAsyncSocket *)sock didAcceptNewSocket:(GCDAsyncSocket *)newSocket;
 
 /**
  * Called when a socket connects and is ready for reading and writing.
  * The host parameter will be an IP address, not a DNS name.
 **/
-- (void)socket:(GCDAsyncSocket *)sock didConnectToHost:(NSString *)host port:(uint16_t)port;
+- (void)_socket:(GCDAsyncSocket *)sock didConnectToHost:(NSString *)host port:(uint16_t)port;
 
 /**
  * Called when a socket connects and is ready for reading and writing.
  * The host parameter will be an IP address, not a DNS name.
  **/
-- (void)socket:(GCDAsyncSocket *)sock didConnectToUrl:(NSURL *)url;
+- (void)_socket:(GCDAsyncSocket *)sock didConnectToUrl:(NSURL *)url;
 
 /**
  * Called when a socket has completed reading the requested data into memory.
  * Not called if there is an error.
 **/
-- (void)socket:(GCDAsyncSocket *)sock didReadData:(NSData *)data withTag:(long)tag;
+- (void)_socket:(GCDAsyncSocket *)sock didReadData:(NSData *)data withTag:(long)tag;
 
 /**
  * Called when a socket has read in data, but has not yet completed the read.
  * This would occur if using readToData: or readToLength: methods.
  * It may be used for things such as updating progress bars.
 **/
-- (void)socket:(GCDAsyncSocket *)sock didReadPartialDataOfLength:(NSUInteger)partialLength tag:(long)tag;
+- (void)_socket:(GCDAsyncSocket *)sock didReadPartialDataOfLength:(NSUInteger)partialLength tag:(long)tag;
 
 /**
  * Called when a socket has completed writing the requested data. Not called if there is an error.
 **/
-- (void)socket:(GCDAsyncSocket *)sock didWriteDataWithTag:(long)tag;
+- (void)_socket:(GCDAsyncSocket *)sock didWriteDataWithTag:(long)tag;
 
 /**
  * Called when a socket has written some data, but has not yet completed the entire write.
  * It may be used for things such as updating progress bars.
 **/
-- (void)socket:(GCDAsyncSocket *)sock didWritePartialDataOfLength:(NSUInteger)partialLength tag:(long)tag;
+- (void)_socket:(GCDAsyncSocket *)sock didWritePartialDataOfLength:(NSUInteger)partialLength tag:(long)tag;
 
 /**
  * Called if a read operation has reached its timeout without completing.
@@ -1143,7 +1143,7 @@ typedef NS_ERROR_ENUM(GCDAsyncSocketErrorDomain, GCDAsyncSocketError) {
  * 
  * Note that this method may be called multiple times for a single read if you return positive numbers.
 **/
-- (NSTimeInterval)socket:(GCDAsyncSocket *)sock shouldTimeoutReadWithTag:(long)tag
+- (NSTimeInterval)_socket:(GCDAsyncSocket *)sock shouldTimeoutReadWithTag:(long)tag
                                                                  elapsed:(NSTimeInterval)elapsed
                                                                bytesDone:(NSUInteger)length;
 
@@ -1168,7 +1168,7 @@ typedef NS_ERROR_ENUM(GCDAsyncSocketErrorDomain, GCDAsyncSocketError) {
  * This delegate method is only called if autoDisconnectOnClosedReadStream has been set to NO.
  * See the discussion on the autoDisconnectOnClosedReadStream method for more information.
 **/
-- (void)socketDidCloseReadStream:(GCDAsyncSocket *)sock;
+- (void)_socketDidCloseReadStream:(GCDAsyncSocket *)sock;
 
 /**
  * Called when a socket disconnects with or without error.
@@ -1191,7 +1191,7 @@ typedef NS_ERROR_ENUM(GCDAsyncSocketErrorDomain, GCDAsyncSocketError) {
  * 
  * Of course, this depends on how your state machine is configured.
 **/
-- (void)socketDidDisconnect:(GCDAsyncSocket *)sock withError:(nullable NSError *)err;
+- (void)_socketDidDisconnect:(GCDAsyncSocket *)sock withError:(nullable NSError *)err;
 
 /**
  * Called after the socket has successfully completed SSL/TLS negotiation.
@@ -1200,7 +1200,7 @@ typedef NS_ERROR_ENUM(GCDAsyncSocketErrorDomain, GCDAsyncSocketError) {
  * If a SSL/TLS negotiation fails (invalid certificate, etc) then the socket will immediately close,
  * and the socketDidDisconnect:withError: delegate method will be called with the specific SSL error code.
 **/
-- (void)socketDidSecure:(GCDAsyncSocket *)sock;
+- (void)_socketDidSecure:(GCDAsyncSocket *)sock;
 
 /**
  * Allows a socket delegate to hook into the TLS handshake and manually validate the peer it's connecting to.
@@ -1219,7 +1219,7 @@ typedef NS_ERROR_ENUM(GCDAsyncSocketErrorDomain, GCDAsyncSocketError) {
  * The completionHandler block is thread-safe, and may be invoked from a background queue/thread.
  * It is safe to invoke the completionHandler block even if the socket has been closed.
 **/
-- (void)socket:(GCDAsyncSocket *)sock didReceiveTrust:(SecTrustRef)trust
+- (void)_socket:(GCDAsyncSocket *)sock didReceiveTrust:(SecTrustRef)trust
                                     completionHandler:(void (^)(BOOL shouldTrustPeer))completionHandler;
 
 @end
