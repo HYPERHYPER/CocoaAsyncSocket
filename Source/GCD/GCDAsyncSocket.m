@@ -2076,9 +2076,9 @@ enum GCDAsyncSocketConfig
 			
 			dispatch_queue_t childSocketQueue = NULL;
 			
-			if ([theDelegate respondsToSelector:@selector(newSocketQueueForConnectionFromAddress:onSocket:)])
+			if ([theDelegate respondsToSelector:@selector(_newSocketQueueForConnectionFromAddress:onSocket:)])
 			{
-				childSocketQueue = [theDelegate newSocketQueueForConnectionFromAddress:childSocketAddress
+				childSocketQueue = [theDelegate _newSocketQueueForConnectionFromAddress:childSocketAddress
 				                                                              onSocket:self];
 			}
 			
@@ -2106,9 +2106,9 @@ enum GCDAsyncSocketConfig
 			
 			// Notify delegate
 			
-			if ([theDelegate respondsToSelector:@selector(socket:didAcceptNewSocket:)])
+			if ([theDelegate respondsToSelector:@selector(_socket:didAcceptNewSocket:)])
 			{
-				[theDelegate socket:self didAcceptNewSocket:acceptedSocket];
+				[theDelegate _socket:self didAcceptNewSocket:acceptedSocket];
 			}
 			
 			// Release the socket queue returned from the delegate (it was retained by acceptedSocket)
@@ -3046,13 +3046,13 @@ enum GCDAsyncSocketConfig
 	
 	__strong id<GCDAsyncSocketDelegate> theDelegate = delegate;
 
-	if (delegateQueue && host != nil && [theDelegate respondsToSelector:@selector(socket:didConnectToHost:port:)])
+	if (delegateQueue && host != nil && [theDelegate respondsToSelector:@selector(_socket:didConnectToHost:port:)])
 	{
 		SetupStreamsPart1();
 		
 		dispatch_async(delegateQueue, ^{ @autoreleasepool {
 			
-			[theDelegate socket:self didConnectToHost:host port:port];
+			[theDelegate _socket:self didConnectToHost:host port:port];
 			
             dispatch_async(self->socketQueue, ^{ @autoreleasepool {
 				
@@ -3060,13 +3060,13 @@ enum GCDAsyncSocketConfig
 			}});
 		}});
 	}
-	else if (delegateQueue && url != nil && [theDelegate respondsToSelector:@selector(socket:didConnectToUrl:)])
+	else if (delegateQueue && url != nil && [theDelegate respondsToSelector:@selector(_socket:didConnectToUrl:)])
 	{
 		SetupStreamsPart1();
 		
 		dispatch_async(delegateQueue, ^{ @autoreleasepool {
 			
-			[theDelegate socket:self didConnectToUrl:url];
+			[theDelegate _socket:self didConnectToUrl:url];
 			
             dispatch_async(self->socketQueue, ^{ @autoreleasepool {
 				
@@ -3368,11 +3368,11 @@ enum GCDAsyncSocketConfig
 		__strong id<GCDAsyncSocketDelegate> theDelegate = delegate;
 		__strong id theSelf = isDeallocating ? nil : self;
 		
-		if (delegateQueue && [theDelegate respondsToSelector: @selector(socketDidDisconnect:withError:)])
+		if (delegateQueue && [theDelegate respondsToSelector: @selector(_socketDidDisconnect:withError:)])
 		{
 			dispatch_async(delegateQueue, ^{ @autoreleasepool {
 				
-				[theDelegate socketDidDisconnect:theSelf withError:error];
+				[theDelegate _socketDidDisconnect:theSelf withError:error];
 			}});
 		}	
 	}
@@ -5555,13 +5555,13 @@ enum GCDAsyncSocketConfig
 
 		__strong id<GCDAsyncSocketDelegate> theDelegate = delegate;
 		
-		if (delegateQueue && [theDelegate respondsToSelector:@selector(socket:didReadPartialDataOfLength:tag:)])
+		if (delegateQueue && [theDelegate respondsToSelector:@selector(_socket:didReadPartialDataOfLength:tag:)])
 		{
 			long theReadTag = currentRead->tag;
 			
 			dispatch_async(delegateQueue, ^{ @autoreleasepool {
 				
-				[theDelegate socket:self didReadPartialDataOfLength:totalBytesReadForCurrentRead tag:theReadTag];
+				[theDelegate _socket:self didReadPartialDataOfLength:totalBytesReadForCurrentRead tag:theReadTag];
 			}});
 		}
 	}
@@ -5669,11 +5669,11 @@ enum GCDAsyncSocketConfig
 			
 			__strong id<GCDAsyncSocketDelegate> theDelegate = delegate;
 
-			if (delegateQueue && [theDelegate respondsToSelector:@selector(socketDidCloseReadStream:)])
+			if (delegateQueue && [theDelegate respondsToSelector:@selector(_socketDidCloseReadStream:)])
 			{
 				dispatch_async(delegateQueue, ^{ @autoreleasepool {
 					
-					[theDelegate socketDidCloseReadStream:self];
+					[theDelegate _socketDidCloseReadStream:self];
 				}});
 			}
 		}
@@ -5761,13 +5761,13 @@ enum GCDAsyncSocketConfig
 	
 	__strong id<GCDAsyncSocketDelegate> theDelegate = delegate;
 
-	if (delegateQueue && [theDelegate respondsToSelector:@selector(socket:didReadData:withTag:)])
+	if (delegateQueue && [theDelegate respondsToSelector:@selector(_socket:didReadData:withTag:)])
 	{
 		GCDAsyncReadPacket *theRead = currentRead; // Ensure currentRead retained since result may not own buffer
 		
 		dispatch_async(delegateQueue, ^{ @autoreleasepool {
 			
-			[theDelegate socket:self didReadData:result withTag:theRead->tag];
+			[theDelegate _socket:self didReadData:result withTag:theRead->tag];
 		}});
 	}
 	
@@ -5836,7 +5836,7 @@ enum GCDAsyncSocketConfig
 	
 	__strong id<GCDAsyncSocketDelegate> theDelegate = delegate;
 
-	if (delegateQueue && [theDelegate respondsToSelector:@selector(socket:shouldTimeoutReadWithTag:elapsed:bytesDone:)])
+	if (delegateQueue && [theDelegate respondsToSelector:@selector(_socket:shouldTimeoutReadWithTag:elapsed:bytesDone:)])
 	{
 		GCDAsyncReadPacket *theRead = currentRead;
 		
@@ -5844,7 +5844,7 @@ enum GCDAsyncSocketConfig
 			
 			NSTimeInterval timeoutExtension = 0.0;
 			
-			timeoutExtension = [theDelegate socket:self shouldTimeoutReadWithTag:theRead->tag
+			timeoutExtension = [theDelegate _socket:self shouldTimeoutReadWithTag:theRead->tag
 			                                                             elapsed:theRead->timeout
 			                                                           bytesDone:theRead->bytesDone];
 			
@@ -6373,13 +6373,13 @@ enum GCDAsyncSocketConfig
 			
 			__strong id<GCDAsyncSocketDelegate> theDelegate = delegate;
 
-			if (delegateQueue && [theDelegate respondsToSelector:@selector(socket:didWritePartialDataOfLength:tag:)])
+			if (delegateQueue && [theDelegate respondsToSelector:@selector(_socket:didWritePartialDataOfLength:tag:)])
 			{
 				long theWriteTag = currentWrite->tag;
 				
 				dispatch_async(delegateQueue, ^{ @autoreleasepool {
 					
-					[theDelegate socket:self didWritePartialDataOfLength:bytesWritten tag:theWriteTag];
+					[theDelegate _socket:self didWritePartialDataOfLength:bytesWritten tag:theWriteTag];
 				}});
 			}
 		}
@@ -6404,13 +6404,13 @@ enum GCDAsyncSocketConfig
 
 	__strong id<GCDAsyncSocketDelegate> theDelegate = delegate;
 	
-	if (delegateQueue && [theDelegate respondsToSelector:@selector(socket:didWriteDataWithTag:)])
+	if (delegateQueue && [theDelegate respondsToSelector:@selector(_socket:didWriteDataWithTag:)])
 	{
 		long theWriteTag = currentWrite->tag;
 		
 		dispatch_async(delegateQueue, ^{ @autoreleasepool {
 			
-			[theDelegate socket:self didWriteDataWithTag:theWriteTag];
+			[theDelegate _socket:self didWriteDataWithTag:theWriteTag];
 		}});
 	}
 	
@@ -7340,11 +7340,11 @@ static OSStatus SSLWriteFunction(SSLConnectionRef connection, const void *data, 
 		
 		__strong id<GCDAsyncSocketDelegate> theDelegate = delegate;
 
-		if (delegateQueue && [theDelegate respondsToSelector:@selector(socketDidSecure:)])
+		if (delegateQueue && [theDelegate respondsToSelector:@selector(_socketDidSecure:)])
 		{
 			dispatch_async(delegateQueue, ^{ @autoreleasepool {
 				
-				[theDelegate socketDidSecure:self];
+				[theDelegate _socketDidSecure:self];
 			}});
 		}
 		
@@ -7394,11 +7394,11 @@ static OSStatus SSLWriteFunction(SSLConnectionRef connection, const void *data, 
 		
 		__strong id<GCDAsyncSocketDelegate> theDelegate = delegate;
 		
-		if (delegateQueue && [theDelegate respondsToSelector:@selector(socket:didReceiveTrust:completionHandler:)])
+		if (delegateQueue && [theDelegate respondsToSelector:@selector(_socket:didReceiveTrust:completionHandler:)])
 		{
 			dispatch_async(delegateQueue, ^{ @autoreleasepool {
 			
-				[theDelegate socket:self didReceiveTrust:trust completionHandler:comletionHandler];
+				[theDelegate _socket:self didReceiveTrust:trust completionHandler:comletionHandler];
 			}});
 		}
 		else
@@ -7478,11 +7478,11 @@ static OSStatus SSLWriteFunction(SSLConnectionRef connection, const void *data, 
 		
 		__strong id<GCDAsyncSocketDelegate> theDelegate = delegate;
 
-		if (delegateQueue && [theDelegate respondsToSelector:@selector(socketDidSecure:)])
+		if (delegateQueue && [theDelegate respondsToSelector:@selector(_socketDidSecure:)])
 		{
 			dispatch_async(delegateQueue, ^{ @autoreleasepool {
 				
-				[theDelegate socketDidSecure:self];
+				[theDelegate _socketDidSecure:self];
 			}});
 		}
 		
